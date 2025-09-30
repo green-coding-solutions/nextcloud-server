@@ -10,6 +10,7 @@ $nextcloudDir = dirname(__DIR__);
 return (require __DIR__ . '/rector-shared.php')
 	->withPaths([
 		$nextcloudDir . '/build/rector-strict.php',
+		$nextcloudDir . '/apps/sharing',
 	])
 	->withPreparedSets(
 		deadCode: true,
