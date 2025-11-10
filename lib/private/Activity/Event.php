@@ -9,11 +9,14 @@ declare(strict_types=1);
  */
 namespace OC\Activity;
 
+use OCA\Activity\AppInfo\Application;
 use OCP\Activity\Exceptions\InvalidValueException;
 use OCP\Activity\IEvent;
+use OCP\IAppConfig;
 use OCP\RichObjectStrings\InvalidObjectExeption;
 use OCP\RichObjectStrings\IRichTextFormatter;
 use OCP\RichObjectStrings\IValidator;
+use Psr\Log\LoggerInterface;
 
 class Event implements IEvent {
 	/** @var string */
@@ -65,6 +68,8 @@ class Event implements IEvent {
 	public function __construct(
 		protected IValidator $richValidator,
 		protected IRichTextFormatter $richTextFormatter,
+		protected LoggerInterface $logger,
+		protected IAppConfig $appConfig,
 	) {
 	}
 
@@ -165,6 +170,24 @@ class Event implements IEvent {
 		if (isset($subject[255])) {
 			throw new InvalidValueException('subject');
 		}
+
+		$counter = $this->appConfig->getValueInt(Application::APP_ID, 'overly_long_activities', 0);
+		foreach ($parameters as $parameter) {
+			if (strlen($parameter) > 4000) {
+				$counter++;
+				$this->logger->error('Activity with over 4000 characters detected', [
+
+				]);
+			} elseif (strlen($parameter) > 2000) {
+				$counter++;
+				$this->logger->warning('Activity with over 2000 characters detected', ['app' => $this->getApp()]);
+			}
+		}
+
+		if ($counter !== 0) {
+			$this->appConfig->setValueInt(Application::APP_ID, 'overly_long_activities', $counter);
+		}
+
 		$this->subject = $subject;
 		$this->subjectParameters = $parameters;
 		return $this;
