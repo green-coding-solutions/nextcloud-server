@@ -58,7 +58,7 @@
 				v-model="localLdapAgentName"
 				:helper-text="t('user_ldap', 'The DN of the client user with which the bind shall be done. For anonymous access, leave DN and Password empty.')"
 				:label="t('user_ldap', 'User DN')"
-				:placeholder="t('uid=agent,dc=example,dc=com"
+				placeholder="uid=agent,dc=example,dc=com"
 				autocomplete="off" />
 		</div>
 
