@@ -36,7 +36,7 @@
 				:model-value="ldapConfigProxy.ldapHost"
 				:helper-text="t('user_ldap', 'You can omit the protocol, unless you require SSL. If so, start with ldaps://')"
 				:label="t('user_ldap', 'Host')"
-				:placeholder="'ldaps://localhost'"
+				placeholder="ldaps://localhost"
 				autocomplete="off"
 				@change="(event) => ldapConfigProxy.ldapHost = event.target.value" />
 			<div class="ldap-wizard__server__host__port">
