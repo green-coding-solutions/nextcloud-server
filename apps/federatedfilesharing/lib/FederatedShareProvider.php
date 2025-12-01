@@ -321,9 +321,6 @@ class FederatedShareProvider implements IShareProvider, IShareProviderSupportsAl
 	}
 
 	/**
-	 * Update a share
-	 *
-	 * @param IShare $share
 	 * @return IShare The share object
 	 */
 	public function update(IShare $share) {
@@ -339,8 +336,16 @@ class FederatedShareProvider implements IShareProvider, IShareProviderSupportsAl
 			->set('expiration', $qb->createNamedParameter($share->getExpirationDate(), IQueryBuilder::PARAM_DATETIME_MUTABLE))
 			->executeStatement();
 
-		// send the updated permission to the owner/initiator, if they are not the same
-		if ($share->getShareOwner() !== $share->getSharedBy()) {
+		/*
+		 * If the share owner and share initiator are on the same instance,
+		 * then we're done here as the share was just updated above.
+		 *
+		 * However, if the share owner is on a remote instance (and thus we're dealing with a federated share),
+		 * then we are supposed to let the share owner on the remote instance know.
+		 */
+		$ownerIsLocal = $this->userManager->userExists($share->getShareOwner());
+
+		if (!$ownerIsLocal) {
 			$this->sendPermissionUpdate($share);
 		}
 
