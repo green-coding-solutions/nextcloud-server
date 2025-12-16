@@ -2192,10 +2192,11 @@ class ShareAPIControllerTest extends TestCase {
 				['OCA\Files_Sharing\SharedStorage', false],
 			]);
 		$path->method('getStorage')->willReturn($storage);
-		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturnSelf();
-		$this->rootFolder->method('get')->with('valid-path')->willReturn($path);
-		$this->rootFolder->method('getById')
+		$userFolder = $this->createMock(IUserFolder::class);
+		$userFolder->method('get')->with('valid-path')->willReturn($path);
+		$userFolder->method('getById')
 			->willReturn([]);
+		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturn($userFolder);
 
 		$this->shareManager->method('newShare')->willReturn(Server::get(IManager::class)->newShare());
 		$this->shareManager->method('shareApiLinkAllowPublicUpload')->willReturn(true);
@@ -2218,10 +2219,11 @@ class ShareAPIControllerTest extends TestCase {
 				['OCA\Files_Sharing\SharedStorage', false],
 			]);
 		$path->method('getStorage')->willReturn($storage);
-		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturnSelf();
-		$this->rootFolder->method('get')->with('valid-path')->willReturn($path);
-		$this->rootFolder->method('getById')
+		$userFolder = $this->createMock(IUserFolder::class);
+		$userFolder->method('get')->with('valid-path')->willReturn($path);
+		$userFolder->method('getById')
 			->willReturn([]);
+		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturn($userFolder);
 
 		$this->shareManager->method('newShare')->willReturn(Server::get(IManager::class)->newShare());
 		$this->shareManager->method('shareApiAllowLinks')->willReturn(true);
@@ -2245,10 +2247,11 @@ class ShareAPIControllerTest extends TestCase {
 		$file->method('getId')->willReturn(42);
 		$file->method('getStorage')->willReturn($storage);
 
-		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturnSelf();
-		$this->rootFolder->method('get')->with('valid-path')->willReturn($file);
-		$this->rootFolder->method('getById')
+		$userFolder = $this->createMock(IUserFolder::class);
+		$userFolder->method('get')->with('valid-path')->willReturn($file);
+		$userFolder->method('getById')
 			->willReturn([]);
+		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturn($userFolder);
 
 		$this->shareManager->method('newShare')->willReturn(Server::get(IManager::class)->newShare());
 		$this->shareManager->method('shareApiAllowLinks')->willReturn(true);
@@ -2269,10 +2272,11 @@ class ShareAPIControllerTest extends TestCase {
 				['OCA\Files_Sharing\SharedStorage', false],
 			]);
 		$path->method('getStorage')->willReturn($storage);
-		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturnSelf();
-		$this->rootFolder->method('get')->with('valid-path')->willReturn($path);
-		$this->rootFolder->method('getById')
+		$userFolder = $this->createMock(IUserFolder::class);
+		$userFolder->method('get')->with('valid-path')->willReturn($path);
+		$userFolder->method('getById')
 			->willReturn([]);
+		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturn($userFolder);
 
 		$this->shareManager->method('newShare')->willReturn(Server::get(IManager::class)->newShare());
 		$this->shareManager->method('shareApiAllowLinks')->willReturn(true);
@@ -2308,10 +2312,11 @@ class ShareAPIControllerTest extends TestCase {
 				['OCA\Files_Sharing\SharedStorage', false],
 			]);
 		$path->method('getStorage')->willReturn($storage);
-		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturnSelf();
-		$this->rootFolder->method('get')->with('valid-path')->willReturn($path);
-		$this->rootFolder->method('getById')
+		$userFolder = $this->createMock(IUserFolder::class);
+		$userFolder->method('get')->with('valid-path')->willReturn($path);
+		$userFolder->method('getById')
 			->willReturn([]);
+		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturn($userFolder);
 
 		$this->shareManager->method('newShare')->willReturn(Server::get(IManager::class)->newShare());
 		$this->shareManager->method('shareApiAllowLinks')->willReturn(true);
@@ -2347,10 +2352,11 @@ class ShareAPIControllerTest extends TestCase {
 				['OCA\Files_Sharing\SharedStorage', false],
 			]);
 		$path->method('getStorage')->willReturn($storage);
-		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturnSelf();
-		$this->rootFolder->method('get')->with('valid-path')->willReturn($path);
-		$this->rootFolder->method('getById')
+		$userFolder = $this->createMock(IUserFolder::class);
+		$userFolder->method('get')->with('valid-path')->willReturn($path);
+		$userFolder->method('getById')
 			->willReturn([]);
+		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturn($userFolder);
 
 		$this->shareManager->method('newShare')->willReturn(Server::get(IManager::class)->newShare());
 		$this->shareManager->method('shareApiAllowLinks')->willReturn(true);
@@ -2394,10 +2400,11 @@ class ShareAPIControllerTest extends TestCase {
 			]);
 		$path->method('getStorage')->willReturn($storage);
 		$path->method('getPath')->willReturn('valid-path');
-		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturnSelf();
-		$this->rootFolder->method('get')->with('valid-path')->willReturn($path);
-		$this->rootFolder->method('getById')
+		$userFolder = $this->createMock(IUserFolder::class);
+		$userFolder->method('get')->with('valid-path')->willReturn($path);
+		$userFolder->method('getById')
 			->willReturn([]);
+		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturn($userFolder);
 
 		$this->shareManager->method('newShare')->willReturn(Server::get(IManager::class)->newShare());
 		$this->shareManager->method('shareApiAllowLinks')->willReturn(true);
@@ -2432,10 +2439,11 @@ class ShareAPIControllerTest extends TestCase {
 				['OCA\Files_Sharing\SharedStorage', false],
 			]);
 		$path->method('getStorage')->willReturn($storage);
-		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturnSelf();
-		$this->rootFolder->method('get')->with('valid-path')->willReturn($path);
-		$this->rootFolder->method('getById')
+		$userFolder = $this->createMock(IUserFolder::class);
+		$userFolder->method('get')->with('valid-path')->willReturn($path);
+		$userFolder->method('getById')
 			->willReturn([]);
+		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturn($userFolder);
 
 		$this->shareManager->method('newShare')->willReturn(Server::get(IManager::class)->newShare());
 		$this->shareManager->method('shareApiAllowLinks')->willReturn(true);
@@ -2478,10 +2486,11 @@ class ShareAPIControllerTest extends TestCase {
 				['OCA\Files_Sharing\SharedStorage', false],
 			]);
 		$path->method('getStorage')->willReturn($storage);
-		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturnSelf();
-		$this->rootFolder->method('get')->with('valid-path')->willReturn($path);
-		$this->rootFolder->method('getById')
+		$userFolder = $this->createMock(IUserFolder::class);
+		$userFolder->method('get')->with('valid-path')->willReturn($path);
+		$userFolder->method('getById')
 			->willReturn([]);
+		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturn($userFolder);
 
 		$this->shareManager->method('newShare')->willReturn(Server::get(IManager::class)->newShare());
 		$this->shareManager->method('shareApiAllowLinks')->willReturn(true);
@@ -5002,20 +5011,19 @@ class ShareAPIControllerTest extends TestCase {
 			->with('files_sharing.sharecontroller.showShare', ['token' => 'myToken'])
 			->willReturn('myLink');
 
-		$this->rootFolder->method('getUserFolder')
-			->with($this->currentUser)
-			->willReturnSelf();
-		$this->dateTimeZone->method('getTimezone')->willReturn(new \DateTimeZone('UTC'));
-
+		$userFolder = $this->createMock(IUserFolder::class);
 		if (!$exception) {
-			$this->rootFolder->method('getFirstNodeById')
+			$userFolder->method('getFirstNodeById')
 				->with($share->getNodeId())
 				->willReturn($share->getNode());
 
-			$this->rootFolder->method('getRelativePath')
+			$userFolder->method('getRelativePath')
 				->with($share->getNode()->getPath())
 				->willReturnArgument(0);
 		}
+		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturn($userFolder);
+		$this->dateTimeZone->method('getTimezone')->willReturn(new \DateTimeZone('UTC'));
+
 
 		$cm = $this->createMock(\OCP\Contacts\IManager::class);
 		$this->overwriteService(\OCP\Contacts\IManager::class, $cm);
@@ -5195,17 +5203,14 @@ class ShareAPIControllerTest extends TestCase {
 			->setNote('personal note')
 			->setId(42);
 
-		$this->rootFolder->method('getUserFolder')
-			->with($this->currentUser)
-			->willReturnSelf();
-
-		$this->rootFolder->method('getFirstNodeById')
+		$userFolder = $this->createMock(IUserFolder::class);
+		$userFolder->method('getFirstNodeById')
 			->with($share->getNodeId())
 			->willReturn($share->getNode());
-
-		$this->rootFolder->method('getRelativePath')
+		$userFolder->method('getRelativePath')
 			->with($share->getNode()->getPath())
 			->willReturnArgument(0);
+		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturn($userFolder);
 
 		if (!$helperAvailable) {
 			$this->appManager->method('isEnabledForUser')
@@ -5260,7 +5265,7 @@ class ShareAPIControllerTest extends TestCase {
 	}
 
 	/**
-	 * @return list{Folder, File}
+	 * @return list{IUserFolder, File}
 	 */
 	private function getNonSharedUserFile(): array {
 		$node = $this->getMockBuilder(File::class)->getMock();
@@ -5352,17 +5357,14 @@ class ShareAPIControllerTest extends TestCase {
 
 		$this->previewManager->method('isAvailable')->with($node)->willReturn(false);
 
-		$this->rootFolder->method('getUserFolder')
-			->with($this->currentUser)
-			->willReturnSelf();
-
-		$this->rootFolder->method('getFirstNodeById')
+		$userFolder = $this->createMock(IUserFolder::class);
+		$userFolder->method('getFirstNodeById')
 			->with($share->getNodeId())
 			->willReturn($node);
-
-		$this->rootFolder->method('getRelativePath')
+		$userFolder->method('getRelativePath')
 			->with($node->getPath())
 			->willReturnArgument(0);
+		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturn($userFolder);
 
 		$serverName = 'remoteserver.com';
 		$this->trustedServers->method('isTrustedServer')
@@ -5415,17 +5417,14 @@ class ShareAPIControllerTest extends TestCase {
 
 		$this->previewManager->method('isAvailable')->with($node)->willReturn(false);
 
-		$this->rootFolder->method('getUserFolder')
-			->with($this->currentUser)
-			->willReturnSelf();
-
-		$this->rootFolder->method('getFirstNodeById')
+		$userFolder = $this->createMock(IUserFolder::class);
+		$userFolder->method('getFirstNodeById')
 			->with($share->getNodeId())
 			->willReturn($node);
-
-		$this->rootFolder->method('getRelativePath')
+		$userFolder->method('getRelativePath')
 			->with($node->getPath())
 			->willReturnArgument(0);
+		$this->rootFolder->method('getUserFolder')->with($this->currentUser)->willReturn($userFolder);
 
 		$serverName = 'remoteserver.com';
 		$this->trustedServers->method('isTrustedServer')
