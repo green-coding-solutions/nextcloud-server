@@ -114,9 +114,7 @@ abstract class QBMapper {
 
 		if ($entity instanceof SnowflakeAwareEntity) {
 			/** @psalm-suppress DocblockTypeContradiction */
-			if ($entity->getId() === null) {
-				$entity->setId();
-			}
+			$entity->setId();
 			$qb->executeStatement();
 		} else {
 			$qb->executeStatement();
