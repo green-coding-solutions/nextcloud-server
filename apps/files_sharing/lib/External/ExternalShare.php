@@ -12,15 +12,13 @@ namespace OCA\Files_Sharing\External;
 
 use OC\Files\Filesystem;
 use OCA\Files_Sharing\ResponseDefinitions;
-use OCP\AppFramework\Db\Entity;
+use OCP\AppFramework\Db\SnowflakeAwareEntity;
 use OCP\DB\Types;
 use OCP\IGroup;
 use OCP\IUser;
 use OCP\Share\IShare;
 
 /**
- * @method string getId()
- * @method void setId(string $id)
  * @method string getParent()
  * @method void setParent(string $parent)
  * @method int|null getShareType()
@@ -46,7 +44,7 @@ use OCP\Share\IShare;
  *
  * @psalm-import-type Files_SharingRemoteShare from ResponseDefinitions
  */
-class ExternalShare extends Entity implements \JsonSerializable {
+class ExternalShare extends SnowflakeAwareEntity implements \JsonSerializable {
 	protected string $parent = '-1';
 	protected ?int $shareType = null;
 	protected ?string $remote = null;

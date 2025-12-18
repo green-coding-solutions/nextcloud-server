@@ -34,7 +34,6 @@ use OCP\IUserSession;
 use OCP\Notification\IManager;
 use OCP\OCS\IDiscoveryService;
 use OCP\Share\IShare;
-use OCP\Snowflake\ISnowflakeGenerator;
 use Psr\Log\LoggerInterface;
 
 class Manager {
@@ -57,7 +56,6 @@ class Manager {
 		private SetupManager $setupManager,
 		private ICertificateManager $certificateManager,
 		private ExternalShareMapper $externalShareMapper,
-		private ISnowflakeGenerator $snowflakeGenerator,
 	) {
 		$this->user = $userSession->getUser();
 	}
@@ -186,7 +184,7 @@ class Manager {
 				$subShare = $this->externalShareMapper->getUserShare($externalShare, $user);
 			} catch (DoesNotExistException) {
 				$subShare = new ExternalShare();
-				$subShare->setId($this->snowflakeGenerator->nextId());
+				$subShare->setId();
 				$subShare->setRemote($externalShare->getRemote());
 				$subShare->setPassword($externalShare->getPassword());
 				$subShare->setName($externalShare->getName());

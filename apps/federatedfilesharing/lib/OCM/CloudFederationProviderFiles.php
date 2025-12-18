@@ -44,7 +44,6 @@ use OCP\Share\Exceptions\ShareNotFound;
 use OCP\Share\IManager;
 use OCP\Share\IProviderFactory;
 use OCP\Share\IShare;
-use OCP\Snowflake\ISnowflakeGenerator;
 use OCP\Util;
 use Override;
 use Psr\Log\LoggerInterface;
@@ -70,7 +69,6 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 		private readonly IFilenameValidator $filenameValidator,
 		private readonly IProviderFactory $shareProviderFactory,
 		private readonly SetupManager $setupManager,
-		private readonly ISnowflakeGenerator $snowflakeGenerator,
 		private readonly ExternalShareMapper $externalShareMapper,
 	) {
 	}
@@ -145,7 +143,7 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 			}
 
 			$externalShare = new ExternalShare();
-			$externalShare->setId($this->snowflakeGenerator->nextId());
+			$externalShare->setId();
 			$externalShare->setRemote($remote);
 			$externalShare->setRemoteId($remoteId);
 			$externalShare->setShareToken($token);
