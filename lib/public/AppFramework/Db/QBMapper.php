@@ -116,10 +116,12 @@ abstract class QBMapper {
 			/** @psalm-suppress DocblockTypeContradiction */
 			$entity->setId();
 			$qb->executeStatement();
-		} else {
+		} elseif ($entity->getId() === null) {
 			$qb->executeStatement();
 			// When autoincrement is used id is always an int
 			$entity->setId($qb->getLastInsertId());
+		} else {
+			$qb->executeStatement();
 		}
 		return $entity;
 	}
