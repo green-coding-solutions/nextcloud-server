@@ -43,7 +43,7 @@ abstract class SnowflakeAwareEntity extends Entity {
 	}
 
 	public function getSnowflake(): ?Snowflake {
-		if (empty($this->id)) {
+		if ($this->id === null) {
 			return null;
 		}
 
