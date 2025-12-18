@@ -59,7 +59,7 @@ class PreviewMapper extends QBMapper {
 					'file_id' => $qb->createNamedParameter($preview->getFileId()),
 				])
 				->executeStatement();
-			$entity->setVersionId($preview->getId());
+			$entity->setVersionId((string)$preview->getId());
 		}
 		return parent::insert($preview);
 	}

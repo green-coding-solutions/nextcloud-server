@@ -193,7 +193,7 @@ class Manager {
 				$subShare->setMountpoint($mountPoint ?? $externalShare->getMountpoint());
 				$subShare->setAccepted($accepted);
 				$subShare->setRemoteId($externalShare->getRemoteId());
-				$subShare->setParent($externalShare->getId());
+				$subShare->setParent((string)$externalShare->getId());
 				$subShare->setShareType($externalShare->getShareType());
 				$subShare->setShareToken($externalShare->getShareToken());
 				$this->externalShareMapper->insert($subShare);
@@ -315,7 +315,7 @@ class Manager {
 		$filter = $this->notificationManager->createNotification();
 		$filter->setApp('files_sharing')
 			->setUser($user->getUID())
-			->setObject('remote_share', $remoteShare->getId());
+			->setObject('remote_share', (string)$remoteShare->getId());
 		$this->notificationManager->markProcessed($filter);
 	}
 

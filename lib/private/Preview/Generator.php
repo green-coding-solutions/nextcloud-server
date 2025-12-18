@@ -543,7 +543,7 @@ class Generator {
 			throw new \RuntimeException('Unable to write preview file');
 		}
 		$previewEntry->setSize($size);
-		$preview->setId();
+		$previewEntry->setId();
 		return $this->previewMapper->insert($previewEntry);
 	}
 }

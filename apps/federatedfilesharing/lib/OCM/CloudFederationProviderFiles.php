@@ -175,9 +175,9 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 						->setType('remote_share')
 						->setSubject(RemoteShares::SUBJECT_REMOTE_SHARE_RECEIVED, [$ownerFederatedId, trim($name, '/'), $ownerDisplayName])
 						->setAffectedUser($shareWith)
-						->setObject('remote_share', $externalShare->getId(), $name);
+						->setObject('remote_share', (string)$externalShare->getId(), $name);
 					Server::get(IActivityManager::class)->publish($event);
-					$this->notifyAboutNewShare($shareWith, $externalShare->getId(), $ownerFederatedId, $sharedByFederatedId, $name, $ownerDisplayName);
+					$this->notifyAboutNewShare($shareWith, (string)$externalShare->getId(), $ownerFederatedId, $sharedByFederatedId, $name, $ownerDisplayName);
 
 					// If auto-accept is enabled, accept the share
 					if ($this->federatedShareProvider->isFederatedTrustedShareAutoAccept() && $trustedServers?->isTrustedServer($remote) === true) {
@@ -191,9 +191,9 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 							->setType('remote_share')
 							->setSubject(RemoteShares::SUBJECT_REMOTE_SHARE_RECEIVED, [$ownerFederatedId, trim($name, '/'), $ownerDisplayName])
 							->setAffectedUser($user->getUID())
-							->setObject('remote_share', $externalShare->getId(), $name);
+							->setObject('remote_share', (string)$externalShare->getId(), $name);
 						Server::get(IActivityManager::class)->publish($event);
-						$this->notifyAboutNewShare($user->getUID(), $externalShare->getId(), $ownerFederatedId, $sharedByFederatedId, $name, $ownerDisplayName);
+						$this->notifyAboutNewShare($user->getUID(), (string)$externalShare->getId(), $ownerFederatedId, $sharedByFederatedId, $name, $ownerDisplayName);
 
 						// If auto-accept is enabled, accept the share
 						if ($this->federatedShareProvider->isFederatedTrustedShareAutoAccept() && $trustedServers?->isTrustedServer($remote) === true) {
@@ -202,7 +202,7 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 					}
 				}
 
-				return $externalShare->getId();
+				return (string)$externalShare->getId();
 			} catch (\Exception $e) {
 				$this->logger->error('Server can not add remote share.', [
 					'app' => 'files_sharing',
@@ -464,7 +464,7 @@ class CloudFederationProviderFiles implements ISignedCloudFederationProvider {
 				$notification = $this->notificationManager->createNotification();
 				$notification->setApp('files_sharing')
 					->setUser($share->getUser())
-					->setObject('remote_share', $share->getId());
+					->setObject('remote_share', (string)$share->getId());
 				$this->notificationManager->markProcessed($notification);
 
 				$event = $this->activityManager->generateEvent();
