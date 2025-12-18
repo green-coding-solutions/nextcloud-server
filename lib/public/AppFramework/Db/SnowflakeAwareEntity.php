@@ -32,9 +32,8 @@ abstract class SnowflakeAwareEntity extends Entity {
 	/**
 	 * Automatically creates a snowflake ID
 	 */
-	#[\Override]
 	public function setId(): void {
-		if (empty($this->id)) {
+		if ($this->id === null) {
 			$this->id = Server::get(ISnowflakeGenerator::class)->nextId();
 			$this->markFieldUpdated('id');
 		}
@@ -44,7 +43,6 @@ abstract class SnowflakeAwareEntity extends Entity {
 	 * @psalm-suppress InvalidReturnStatement
 	 * @psalm-suppress InvalidReturnType
 	 */
-	#[\Override]
 	public function getId(): string {
 		return $this->id;
 	}
