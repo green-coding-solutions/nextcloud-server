@@ -21,30 +21,21 @@ use OCP\Snowflake\Snowflake;
  */
 #[Consumable(since: '33.0.0')]
 abstract class SnowflakeAwareEntity extends Entity {
-	/** @var string $id */
-	public $id;
-
+	private ?string $id = null;
 	protected ?Snowflake $snowflake = null;
 
-	/** @var array<string, \OCP\DB\Types::*> */
+	/** @psalm-param $_fieldTypes array<string, Types::*> */
 	private array $_fieldTypes = ['id' => Types::STRING];
 
 	/**
 	 * Automatically creates a snowflake ID
 	 */
-	public function setId(): void {
+	#[\Override]
+	public function setId($id = null): void {
 		if ($this->id === null) {
 			$this->id = Server::get(ISnowflakeGenerator::class)->nextId();
 			$this->markFieldUpdated('id');
 		}
-	}
-
-	/**
-	 * @psalm-suppress InvalidReturnStatement
-	 * @psalm-suppress InvalidReturnType
-	 */
-	public function getId(): string {
-		return $this->id;
 	}
 
 	public function getCreatedAt(): ?\DateTimeImmutable {
