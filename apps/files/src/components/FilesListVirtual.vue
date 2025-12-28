@@ -78,7 +78,7 @@ import type { UserConfig } from '../types.ts'
 
 import { showError } from '@nextcloud/dialogs'
 import { subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { FileType, Folder, getFileActions, Permission, View } from '@nextcloud/files'
+import { FileType, Folder, getFileActions, getSidebar, Permission, View } from '@nextcloud/files'
 import { n, t } from '@nextcloud/l10n'
 import { useHotKey } from '@nextcloud/vue/composables/useHotKey'
 import { defineComponent } from 'vue'
@@ -90,7 +90,6 @@ import FilesListTableFooter from './FilesListTableFooter.vue'
 import FilesListTableHeader from './FilesListTableHeader.vue'
 import FilesListTableHeaderActions from './FilesListTableHeaderActions.vue'
 import VirtualList from './VirtualList.vue'
-import { action as sidebarAction } from '../actions/sidebarAction.ts'
 import { useFileListHeaders } from '../composables/useFileListHeaders.ts'
 import { useFileListWidth } from '../composables/useFileListWidth.ts'
 import { useRouteParameters } from '../composables/useRouteParameters.ts'
@@ -134,6 +133,7 @@ export default defineComponent({
 	},
 
 	setup() {
+		const sidebar = getSidebar()
 		const activeStore = useActiveStore()
 		const selectionStore = useSelectionStore()
 		const userConfigStore = useUserConfigStore()
@@ -148,6 +148,7 @@ export default defineComponent({
 			openDetails,
 			openFile,
 
+			sidebar,
 			activeStore,
 			selectionStore,
 			userConfigStore,
@@ -311,22 +312,12 @@ export default defineComponent({
 			// Open the sidebar for the given URL fileid
 			// iif we just loaded the app.
 			const node = this.nodes.find((n) => n.fileid === fileId) as NcNode
-			if (node && sidebarAction?.enabled?.({
-				nodes: [node],
-				folder: this.currentFolder,
-				view: this.currentView,
-				contents: this.nodes,
-			})) {
+			if (node && this.sidebar.available) {
 				logger.debug('Opening sidebar on file ' + node.path, { node })
-				sidebarAction.exec({
-					nodes: [node],
-					folder: this.currentFolder,
-					view: this.currentView,
-					contents: this.nodes,
-				})
-				return
+				this.sidebar.open(node)
+			} else {
+				logger.warn(`Failed to open sidebar on file ${fileId}, file isn't cached yet !`, { fileId, node })
 			}
-			logger.warn(`Failed to open sidebar on file ${fileId}, file isn't cached yet !`, { fileId, node })
 		},
 
 		scrollToFile(fileId: number | null, warn = true) {

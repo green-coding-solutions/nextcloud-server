@@ -169,7 +169,7 @@ import { getCurrentUser } from '@nextcloud/auth'
 import { getCapabilities } from '@nextcloud/capabilities'
 import { showError, showSuccess, showWarning } from '@nextcloud/dialogs'
 import { emit, subscribe, unsubscribe } from '@nextcloud/event-bus'
-import { Folder, getFileListActions, Permission, sortNodes } from '@nextcloud/files'
+import { Folder, getFileListActions, getSidebar, Permission, sortNodes } from '@nextcloud/files'
 import { getRemoteURL, getRootPath } from '@nextcloud/files/dav'
 import { loadState } from '@nextcloud/initial-state'
 import { translate as t } from '@nextcloud/l10n'
@@ -195,7 +195,6 @@ import ViewGridIcon from 'vue-material-design-icons/ViewGridOutline.vue'
 import BreadCrumbs from '../components/BreadCrumbs.vue'
 import DragAndDropNotice from '../components/DragAndDropNotice.vue'
 import FilesListVirtual from '../components/FilesListVirtual.vue'
-import { action as sidebarAction } from '../actions/sidebarAction.ts'
 import { useFileListWidth } from '../composables/useFileListWidth.ts'
 import { useNavigation } from '../composables/useNavigation.ts'
 import { useRouteParameters } from '../composables/useRouteParameters.ts'
@@ -250,6 +249,8 @@ export default defineComponent({
 	},
 
 	setup() {
+		const sidebar = getSidebar()
+
 		const { currentView } = useNavigation()
 		const { directory, fileId } = useRouteParameters()
 		const fileListWidth = useFileListWidth()
@@ -283,6 +284,7 @@ export default defineComponent({
 			viewConfigStore,
 
 			// non reactive data
+			sidebar,
 			enableGridView,
 			forbiddenCharacters,
 			ShareType,
@@ -557,9 +559,7 @@ export default defineComponent({
 			logger.debug('Directory changed', { newDir, oldDir })
 			// TODO: preserve selection on browsing?
 			this.selectionStore.reset()
-			if (window.OCA.Files.Sidebar?.close) {
-				window.OCA.Files.Sidebar.close()
-			}
+			this.sidebar.close()
 			this.fetchContent()
 
 			// Scroll to top, force virtual scroller to re-render
@@ -792,15 +792,7 @@ export default defineComponent({
 				return
 			}
 
-			if (window?.OCA?.Files?.Sidebar?.setActiveTab) {
-				window.OCA.Files.Sidebar.setActiveTab('sharing')
-			}
-			sidebarAction.exec({
-				nodes: [this.source],
-				view: this.currentView,
-				folder: this.currentFolder,
-				contents: this.dirContents,
-			})
+			this.sidebar.open(this.source, 'sharing')
 		},
 
 		toggleGridView() {
