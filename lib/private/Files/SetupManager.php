@@ -40,6 +40,7 @@ use OCP\Files\Config\IRootMountProvider;
 use OCP\Files\Config\IUserMountCache;
 use OCP\Files\Events\BeforeFileSystemSetupEvent;
 use OCP\Files\Events\InvalidateMountCacheEvent;
+use OCP\Files\Events\Node\BeforeNodeRenamedEvent;
 use OCP\Files\Events\Node\FilesystemTornDownEvent;
 use OCP\Files\Mount\IMountManager;
 use OCP\Files\Mount\IMountPoint;
@@ -713,6 +714,13 @@ class SetupManager {
 		});
 		$this->eventDispatcher->addListener(ShareCreatedEvent::class, function (ShareCreatedEvent $event) {
 			$this->cache->remove($event->getShare()->getSharedWith());
+		});
+		$this->eventDispatcher->addListener(BeforeNodeRenamedEvent::class, function (BeforeNodeRenamedEvent $event) {
+			// update cache information that is cached by mount point
+			$from = rtrim($event->getSource()->getPath(), '/') . '/';
+			$to = rtrim($event->getTarget()->getPath(), '/') . '/';
+			$this->setupMountProviderPaths[$to] = $this->setupMountProviderPaths[$from];
+			unset($this->setupMountProviderPaths[$from]);
 		});
 		$this->eventDispatcher->addListener(InvalidateMountCacheEvent::class, function (InvalidateMountCacheEvent $event,
 		) {
