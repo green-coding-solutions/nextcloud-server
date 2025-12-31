@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 50
 
       - name: Set up Git user
         run: |
@@ -22,7 +24,7 @@ jobs:
       - name: Add remote repository
         run: |
           git remote add upstream https://github.com/nextcloud/server
-          git fetch upstream master
+          git fetch --depth 50 --no-recurse-submodules --no-tags upstream master
 
       - name: Check for updates
         run: |
@@ -30,15 +32,15 @@ jobs:
           if [ "$CHANGES" -gt 0 ]; then
             echo "Updating fork master branch..."
             git checkout master
-            git merge --ff-only upstream/master
-            git push
-
-            echo "Bringing in changes from Green Metrics Tool Branch..."
-            git checkout green-metrics-tool
-            git pull
-            git checkout master
-            git merge --ff-only green-metrics-tool
+            git merge upstream/master
             git push
           else
             echo "No updates from the original repository."
           fi
+      - name: Merge in new changes from GMT branch
+        run: |
+            git checkout green-metrics-tool
+            git pull
+            git checkout master
+            git merge green-metrics-tool
+            git push
