@@ -33,14 +33,13 @@ jobs:
             echo "Updating fork master branch..."
             git checkout master
             git merge upstream/master
-            git push
           else
             echo "No updates from the original repository."
           fi
       - name: Merge in new changes from GMT branch
         run: |
-            git checkout green-metrics-tool
-            git pull
-            git checkout master
+            git fetch --depth=50 origin green-metrics-tool:green-metrics-tool
             git merge green-metrics-tool
+      - name: Push
+        run: |
             git push
