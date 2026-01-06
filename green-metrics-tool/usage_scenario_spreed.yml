@@ -22,8 +22,8 @@ services:
 # since that is the case a local dev could also just mount a local folder which is already
 # a supported feature
 relations:
-  calendar: # will be put in /tmp/relations/calendar
-    url: https://github.com/green-coding-solutions/nextcloud-calendar
+  spreed: # will be put in /tmp/relations/calendar
+    url: https://github.com/green-coding-solutions/nextcloud-spreed
     branch: green-metrics-tool
     # commit_hash: ghhkshfkjsdnfk # no commit means latest
 
@@ -33,30 +33,41 @@ flow:
     container: gcb-playwright
     commands:
       - type: console
-        command: python3 /tmp/relations/calendar/green-metrics-tool/nextcloud_install.py firefox
+        command: python3 /tmp/relations/spreed/green-metrics-tool/nextcloud_install.py firefox
 
   - name: Install Apps
     container: app
     commands:
       - type: console
         command: |
-          mkdir /var/www/html/apps/calendar/ \
-          && cp -r /tmp/relations/calendar/* /var/www/html/apps/calendar/ \
-          && chown -R www-data:www-data /var/www/html/apps/calendar/ \
-          && cd /var/www/html/apps/calendar/ \
+          mkdir /var/www/html/apps/spreed/ \
+          && cp -r /tmp/relations/spreed/* /var/www/html/apps/spreed/\
+          && chown -R www-data:www-data /var/www/html/apps/spreed/ \
+          && cd /var/www/html/apps/spreed/ \
           && sudo -u www-data composer install --no-dev \
           && sudo -u www-data npm ci \
-          && sudo -u www-data npm run build -- --parallelism 1 \
-          && sudo -u www-data php /var/www/html/occ app:enable calendar
+          && sudo -u www-data make build-js-production \
+          && sudo -u www-data php /var/www/html/occ app:enable spreed
         shell: bash
 
 
 
-  - name: Calendar
+  - name: Talk
     container: gcb-playwright
     commands:
       - type: console
-        command: python3 /tmp/relations/calendar/green-metrics-tool/nextcloud_calendar.py firefox
+        command: python3 /tmp/relations/spreed/green-metrics-tool/nextcloud_talk.py firefox
+        note: Creating event
+        read-notes-stdout: true
+        read-sci-stdout: true
+        log-stdout: true
+        log-stderr: true
+
+  - name: Video
+    container: gcb-playwright
+    commands:
+      - type: console
+        command: python3 /tmp/relations/spreed/green-metrics-tool/nextcloud_video.py firefox
         note: Creating event
         read-notes-stdout: true
         read-sci-stdout: true

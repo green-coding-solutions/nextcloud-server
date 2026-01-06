@@ -1,7 +1,7 @@
 ---
 name: Nextcloud - MariaDB - Install - Firefox
 author: Arne Tarara <arne@green-coding.io> + Didi Hoffmann <didi@green-coding.io>
-description: Nexcloud Calendar Scenario
+description: Nexcloud Contacts Scenario
 compose-file: !include compose.yml
 
 services:
@@ -22,8 +22,8 @@ services:
 # since that is the case a local dev could also just mount a local folder which is already
 # a supported feature
 relations:
-  calendar: # will be put in /tmp/relations/calendar
-    url: https://github.com/green-coding-solutions/nextcloud-calendar
+  contacts: # will be put in /tmp/relations/calendar
+    url: https://github.com/green-coding-solutions/nextcloud-contacts
     branch: green-metrics-tool
     # commit_hash: ghhkshfkjsdnfk # no commit means latest
 
@@ -33,30 +33,28 @@ flow:
     container: gcb-playwright
     commands:
       - type: console
-        command: python3 /tmp/relations/calendar/green-metrics-tool/nextcloud_install.py firefox
+        command: python3 /tmp/relations/contacts/green-metrics-tool/nextcloud_install.py firefox
 
   - name: Install Apps
     container: app
     commands:
       - type: console
         command: |
-          mkdir /var/www/html/apps/calendar/ \
-          && cp -r /tmp/relations/calendar/* /var/www/html/apps/calendar/ \
-          && chown -R www-data:www-data /var/www/html/apps/calendar/ \
-          && cd /var/www/html/apps/calendar/ \
+          mkdir /var/www/html/apps/contacts/ \
+          && cp -r /tmp/relations/contacts/* /var/www/html/apps/contacts/\
+          && chown -R www-data:www-data /var/www/html/apps/contacts/ \
+          && cd /var/www/html/apps/contacts/ \
           && sudo -u www-data composer install --no-dev \
           && sudo -u www-data npm ci \
-          && sudo -u www-data npm run build -- --parallelism 1 \
-          && sudo -u www-data php /var/www/html/occ app:enable calendar
+          && sudo -u www-data npm run build \
+          && sudo -u www-data php /var/www/html/occ app:enable contacts
         shell: bash
 
-
-
-  - name: Calendar
+  - name: Contacts
     container: gcb-playwright
     commands:
       - type: console
-        command: python3 /tmp/relations/calendar/green-metrics-tool/nextcloud_calendar.py firefox
+        command: python3 /tmp/relations/contacts/green-metrics-tool/nextcloud_contacts.py firefox
         note: Creating event
         read-notes-stdout: true
         read-sci-stdout: true
