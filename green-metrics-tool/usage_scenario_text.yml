@@ -1,0 +1,104 @@
+---
+name: Nextcloud - MariaDB - Install - Firefox
+author: Arne Tarara <arne@green-coding.io> + Didi Hoffmann <didi@green-coding.io>
+description: Nexcloud Contacts Scenario
+compose-file: !include compose.yml
+
+services:
+  gcb-playwright:
+    image: greencoding/gcb_playwright:v21
+#    depends_on:
+#      nc:
+#        condition: service_healthy
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix # for debugging in non-headless mode
+    environment:
+       DISPLAY: ":0" # for debugging in non-headless mode
+    setup-commands:
+      - command: pip install dotenv
+
+# this code will never support local filenames
+# as it anyway would require a change in the usage scenario file
+# since that is the case a local dev could also just mount a local folder which is already
+# a supported feature
+relations:
+  text:
+    url: https://github.com/green-coding-solutions/nextcloud-text.git
+    branch: green-metrics-tool
+    # commit_hash: ghhkshfkjsdnfk # no commit means latest
+
+
+flow:
+  - name: Install Nextcloud
+    container: gcb-playwright
+    commands:
+      - type: console
+        command: python3 /tmp/relations/text/green-metrics-tool/nextcloud_install.py firefox
+
+  - name: Install Apps
+    container: app
+    commands:
+      - type: console
+        command: |
+          sudo -u www-data git clone -b master --single-branch --depth 1 https://github.com/nextcloud/viewer.git /var/www/html/apps/viewer/ \
+          && cd /var/www/html/apps/viewer/ \
+          && sudo -u www-data npm ci \
+          && sudo -u www-data npm run build \
+          && sudo -u www-data php /var/www/html/occ app:enable viewer
+        shell: bash
+
+      - type: console
+        command: |
+          mkdir /var/www/html/apps/text/ \
+          && cp -r /tmp/relations/text/* /var/www/html/apps/text/ \
+          && chown -R www-data:www-data /var/www/html/apps/text/ \
+          && cd /var/www/html/apps/text/ \
+          && sudo -u www-data composer install --no-dev \
+          && sudo -u www-data make npm-init build-js-production \
+          && sudo -u www-data php /var/www/html/occ app:enable text
+        shell: bash
+
+  - name: Create User
+    container: gcb-playwright
+    commands:
+      - type: console
+        command: python3 /tmp/relations/text/green-metrics-tool/nextcloud_docs_create_user.py firefox
+        note: Creating event
+        read-notes-stdout: true
+        read-sci-stdout: true
+        log-stdout: true
+        log-stderr: true
+
+  - name: Docs create and share
+    container: gcb-playwright
+    commands:
+      - type: console
+        command: python3 /tmp/relations/text/green-metrics-tool/nextcloud_docs_create_doc_and_share.py firefox
+        note: Creating event
+        read-notes-stdout: true
+        read-sci-stdout: true
+        log-stdout: true
+        log-stderr: true
+
+  - name: Collaborative Editing
+    container: gcb-playwright
+    commands:
+      - type: console
+        command: python3 /tmp/relations/text/green-metrics-tool/nextcloud_docs_collaboration.py firefox
+        note: Creating event
+        read-notes-stdout: true
+        read-sci-stdout: true
+        log-stdout: true
+        log-stderr: true
+
+  - name: Delete User
+    container: gcb-playwright
+    commands:
+      - type: console
+        command: python3 /tmp/relations/text/green-metrics-tool/nextcloud_docs_delete_user_and_file.py firefox
+        note: Creating event
+        read-notes-stdout: true
+        read-sci-stdout: true
+        log-stdout: true
+        log-stderr: true
+
