@@ -33,6 +33,7 @@ jobs:
           if [ "$CHANGES" -gt 0 ]; then
             echo "Updating fork master branch..."
             git checkout master
+            git pull
             git merge upstream/master
           else
             echo "No updates from the original repository."
