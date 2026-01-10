@@ -7,15 +7,13 @@ compose-file: !include compose.yml
 services:
   gcb-playwright:
     image: greencoding/gcb_playwright:v21
-#    depends_on:
-#      nc:
-#        condition: service_healthy
+    depends_on:
+      app:
+        condition: service_healthy
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix # for debugging in non-headless mode
     environment:
        DISPLAY: ":0" # for debugging in non-headless mode
-    setup-commands:
-      - command: pip install dotenv
 
 # this code will never support local filenames
 # as it anyway would require a change in the usage scenario file
@@ -24,19 +22,21 @@ services:
 relations:
   calendar: # will be put in /tmp/relations/calendar
     url: https://github.com/green-coding-solutions/nextcloud-calendar
-    branch: green-metrics-tool
+    branch: main
     # commit_hash: ghhkshfkjsdnfk # no commit means latest
 
 
 flow:
   - name: Install Nextcloud
     container: gcb-playwright
+    hidden: true
     commands:
       - type: console
         command: python3 /tmp/relations/calendar/green-metrics-tool/nextcloud_install.py firefox
 
   - name: Install Apps
     container: app
+    hidden: true
     commands:
       - type: console
         command: |
