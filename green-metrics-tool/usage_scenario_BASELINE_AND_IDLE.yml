@@ -1,0 +1,24 @@
+---
+name: Nextcloud - MariaDB - Baseline & Idle - Firefox
+author: Arne Tarara <arne@green-coding.io> + Didi Hoffmann <didi@green-coding.io>
+description: Nexcloud Blue Angel Baseline & Idle Scenario
+compose-file: !include compose.yml
+
+services:
+  gcb-playwright:
+    image: greencoding/gcb_playwright:v21
+    depends_on:
+      app:
+        condition: service_healthy
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix # for debugging in non-headless mode
+    environment:
+       DISPLAY: ":0" # for debugging in non-headless mode
+
+flow:
+  - name: Noop
+    container: gcb-playwright
+    commands:
+      - type: console
+        command: echo 'Done'
+        note: Noop
