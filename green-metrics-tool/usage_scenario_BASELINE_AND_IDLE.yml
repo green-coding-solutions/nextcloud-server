@@ -10,10 +10,7 @@ services:
     depends_on:
       app:
         condition: service_healthy
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix # for debugging in non-headless mode
-    environment:
-       DISPLAY: ":0" # for debugging in non-headless mode
+    command: [ "tail", "-f", "/dev/null" ]   # keep container running
 
 flow:
   - name: Noop
