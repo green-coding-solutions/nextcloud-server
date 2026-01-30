@@ -22,7 +22,6 @@ def log_note(message: str) -> None:
 
 
 def close_modal(page) -> None:
-    return
     with contextlib.suppress(TimeoutError):
         user_sleep() # Sleep to make sure the modal has time to appear before continuing navigation
         page.locator('#firstrunwizard .modal-container__content button[aria-label=Close]').click(timeout=15_000)

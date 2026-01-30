@@ -105,8 +105,8 @@ def run(playwright: Playwright, browser_name: str, headless=False) -> None:
         user_sleep()
 
         # Wait for the modal to load. As it seems you can't close it while it is showing the opening animation.
-        log_note("Close first-time run popup")
-        close_modal(page)
+        log_note("(Skipped) Close first-time run popup") # Modal popup does not exist anymore in new Nextcloud version. We keep legacy code for comparability with Blue Angel Usage Scenario
+#        close_modal(page)
 
         log_note("Go to Files")
         page.get_by_role("link", name="Files").click()
