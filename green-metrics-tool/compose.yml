@@ -54,16 +54,6 @@ services:
   #       sleep 300;
   #     done'
 
-  gcb-playwright:
-    image: greencoding/gcb_playwright:v21
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix # for debugging in non-headless mode
-      # - .:/tmp/repo
-    environment:
-       DISPLAY: ":0" # for debugging in non-headless mode
-    #tty: true              # nice to have for interactive shells
-    #stdin_open: true       # "
-    command: [ "tail", "-f", "/dev/null" ]   # keep container running
   db:
     image: mariadb:10.11
     restart: unless-stopped
