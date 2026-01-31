@@ -1,7 +1,7 @@
 ---
 name: Nextcloud - MariaDB - Baseline & Idle - Firefox
 author: Arne Tarara <arne@green-coding.io> + Didi Hoffmann <didi@green-coding.io>
-description: Nexcloud Blue Angel Baseline & Idle Scenario
+description: Nexcloud Blue Angel Baseline & Idle Scenario with all apps installed
 compose-file: !include compose.yml
 
 services:
@@ -12,10 +12,100 @@ services:
         condition: service_healthy
     command: [ "tail", "-f", "/dev/null" ]   # keep container running
 
+relations:
+  text:
+    url: https://github.com/green-coding-solutions/nextcloud-text.git
+    branch: main
+    # commit_hash: ghhkshfkjsdnfk # no commit means latest
+  spreed: # will be put in /tmp/relations/calendar
+    url: https://github.com/green-coding-solutions/nextcloud-spreed
+    branch: main
+    # commit_hash: ghhkshfkjsdnfk # no commit means latest
+  contacts: # will be put in /tmp/relations/calendar
+    url: https://github.com/green-coding-solutions/nextcloud-contacts
+    branch: main
+    # commit_hash: ghhkshfkjsdnfk # no commit means latest
+  calendar: # will be put in /tmp/relations/calendar
+    url: https://github.com/green-coding-solutions/nextcloud-calendar
+    branch: main
+    # commit_hash: ghhkshfkjsdnfk # no commit means latest
+
+
 flow:
-  - name: Noop
+  - name: Install Nextcloud
     container: gcb-playwright
+    hidden: true
     commands:
       - type: console
-        command: echo 'Done'
-        note: Noop
+        command: python3 /tmp/relations/text/green-metrics-tool/nextcloud_install.py firefox
+
+
+  - name: Install Apps
+    hidden: true
+    container: app
+    commands:
+      - type: console
+        command: |
+          sudo -u www-data git clone -b master --single-branch --depth 1 https://github.com/nextcloud/viewer.git /var/www/html/apps/viewer/ \
+          && cd /var/www/html/apps/viewer/ \
+          && sudo -u www-data npm ci \
+          && sudo -u www-data npm run build \
+          && sudo -u www-data php /var/www/html/occ app:enable viewer
+        shell: bash
+
+      - type: console
+        command: |
+          mkdir /var/www/html/apps/text/ \
+          && cp -r /tmp/relations/text/* /var/www/html/apps/text/ \
+          && chown -R www-data:www-data /var/www/html/apps/text/ \
+          && cd /var/www/html/apps/text/ \
+          && sudo -u www-data composer install --no-dev \
+          && sudo -u www-data make npm-init build-js-production \
+          && sudo -u www-data php /var/www/html/occ app:enable text
+        shell: bash
+
+      - type: console
+        command: |
+          mkdir /var/www/html/apps/spreed/ \
+          && cp -r /tmp/relations/spreed/* /var/www/html/apps/spreed/\
+          && chown -R www-data:www-data /var/www/html/apps/spreed/ \
+          && cd /var/www/html/apps/spreed/ \
+          && sudo -u www-data composer install --no-dev \
+          && sudo -u www-data npm ci \
+          && sudo -u www-data make build-js-production \
+          && sudo -u www-data php /var/www/html/occ app:enable spreed
+        shell: bash
+
+      - type: console
+        command: |
+          mkdir /var/www/html/apps/contacts/ \
+          && cp -r /tmp/relations/contacts/* /var/www/html/apps/contacts/\
+          && chown -R www-data:www-data /var/www/html/apps/contacts/ \
+          && cd /var/www/html/apps/contacts/ \
+          && sudo -u www-data composer install --no-dev \
+          && sudo -u www-data npm ci \
+          && sudo -u www-data npm run build \
+          && sudo -u www-data php /var/www/html/occ app:enable contacts
+        shell: bash
+
+      - type: console
+        command: |
+          mkdir /var/www/html/apps/calendar/ \
+          && cp -r /tmp/relations/calendar/* /var/www/html/apps/calendar/ \
+          && sed -i '/^module\.exports = webpackConfig$/e cat /tmp/repo/green-metrics-tool/memory_patch.txt' /var/www/html/apps/calendar/webpack.config.js \
+          && chown -R www-data:www-data /var/www/html/apps/calendar/ \
+          && cd /var/www/html/apps/calendar/ \
+          && sudo -u www-data composer install --no-dev \
+          && sudo -u www-data npm ci \
+          && sudo -u www-data npm run build -- --parallelism 1 \
+          && sudo -u www-data php /var/www/html/occ app:enable calendar
+        shell: bash
+
+  - name: Idle 3600
+    container: gcb-playwright
+    # we do not open the browser window, as the window is part of the automation tool, the browser and thus not part
+    # of the idle of the application. We would rather measure the idle of the automation mostly.
+    commands:
+      - type: console
+        command: sleep 3600
+        note: Idle 3600
