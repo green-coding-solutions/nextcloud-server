@@ -17,6 +17,9 @@ services:
        HOST_URL: https://ncs
     command: [ "tail", "-f", "/dev/null" ]   # keep container running
 
+  ncs:
+    mem_limit: 500MB # this should be enough and leaves room for the App container to have ~4 GB
+
 # this code will never support local filenames
 # as it anyway would require a change in the usage scenario file
 # since that is the case a local dev could also just mount a local folder which is already
