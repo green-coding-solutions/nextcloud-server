@@ -1,7 +1,7 @@
 ---
-name: Nextcloud - MariaDB - Install - Firefox
+name: Nextcloud - Talk - MariaDB - Firefox
 author: Arne Tarara <arne@green-coding.io> + Didi Hoffmann <didi@green-coding.io>
-description: Nexcloud Calendar Scenario
+description: Nexcloud Talk Scenario
 compose-file: !include compose.yml
 
 services:
@@ -14,6 +14,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix # for debugging in non-headless mode
     environment:
        DISPLAY: ":0" # for debugging in non-headless mode
+       HOST_URL: https://ncs
     command: [ "tail", "-f", "/dev/null" ]   # keep container running
 
 # this code will never support local filenames
@@ -28,6 +29,30 @@ relations:
 
 
 flow:
+  - name: Patch config
+    container: app
+    hidden: true
+    commands:
+      - type: console
+        shell: bash
+        command: |
+          cat <<'EOF' > config/config.php
+          <?php
+            $CONFIG = array (
+              'overwriteprotocol' => 'https',
+              'overwrite.cli.url' => 'https://ncs',
+              'trusted_proxies' =>
+              array (
+                0 => 'ncs',
+              ),
+              'trusted_domains' =>
+              array (
+                0 => 'ncs',
+              ),
+              'upgrade.disable-web' => true,
+              'instanceid' => 'ocvb0i3uw47a',
+            );
+          EOF
   - name: Install Nextcloud
     container: gcb-playwright
     hidden: true
@@ -51,24 +76,11 @@ flow:
           && sudo -u www-data php /var/www/html/occ app:enable spreed
         shell: bash
 
-
-
   - name: Talk
     container: gcb-playwright
     commands:
       - type: console
         command: python3 /tmp/relations/spreed/green-metrics-tool/nextcloud_talk.py firefox
-        note: Creating event
-        read-notes-stdout: true
-        read-sci-stdout: true
-        log-stdout: true
-        log-stderr: true
-
-  - name: Video
-    container: gcb-playwright
-    commands:
-      - type: console
-        command: python3 /tmp/relations/spreed/green-metrics-tool/nextcloud_video.py firefox
         note: Creating event
         read-notes-stdout: true
         read-sci-stdout: true

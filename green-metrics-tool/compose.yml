@@ -13,9 +13,18 @@ services:
     environment:
       # REDIS_HOST: redis
       PHP_MEMORY_LIMIT: 512M
-      HOST_URL: http://app
+      HOST_URL: https://ncs
+      NEXTCLOUD_TRUSTED_DOMAINS: ncs
+      TRUSTED_PROXIES: ncs
+      APACHE_DISABLE_REWRITE_IP: 1
+      OVERWRITEPROTOCOL: https
+      OVERWRITECLIURL: https://ncs
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+      MYSQL_PASSWORD: nextcloud
+      MYSQL_HOST: db
     healthcheck:
-      test: curl --fail --silent -k http://app
+      test: curl --fail --silent -k https://ncs
       interval: "1h" # effectively turns repeated healthchecks during runtime off
       start_period: "60s"
       start_interval: "1s"
@@ -67,18 +76,13 @@ services:
     # volumes:
     #   - db_data:/var/lib/mysql
 
-  # redis:
-  #   image: redis:7-alpine
-  #   container_name: nextcloud-redis
-  #   restart: unless-stopped
-  #   command: ["redis-server", "--save", "", "--appendonly", "no"]
-  #   volumes:
-  #     - redis_data:/data
-
-# volumes:
-#   nextcloud_data:
-#   nextcloud_config:
-#   nextcloud_apps:
-#   nextcloud_theme:
-#   db_data:
-#   redis_data:
+  ncs:
+    image: nginx:1.27.3-bookworm
+    ports:
+      - "443:443"
+    depends_on:
+      - app
+    volumes:
+      - ./nginx-proxy/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx-proxy/cert.crt:/etc/ssl/certs/cert.crt:ro
+      - ./nginx-proxy/cert.key:/etc/ssl/private/cert.key:ro

@@ -1,7 +1,7 @@
 ---
-name: Nextcloud - MariaDB - Install - Firefox
+name: Nextcloud - Text - MariaDB - Firefox
 author: Arne Tarara <arne@green-coding.io> + Didi Hoffmann <didi@green-coding.io>
-description: Nexcloud Contacts Scenario
+description: Nexcloud Text Scenario
 compose-file: !include compose.yml
 
 services:
@@ -14,6 +14,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix # for debugging in non-headless mode
     environment:
        DISPLAY: ":0" # for debugging in non-headless mode
+       HOST_URL: https://ncs
     command: [ "tail", "-f", "/dev/null" ]   # keep container running
 
 # this code will never support local filenames
@@ -25,9 +26,35 @@ relations:
     url: https://github.com/green-coding-solutions/nextcloud-text.git
     branch: main
     # commit_hash: ghhkshfkjsdnfk # no commit means latest
-
+  viewer:
+    url: https://github.com/nextcloud/viewer.git
+    branch: master
 
 flow:
+  - name: Patch config
+    container: app
+    hidden: true
+    commands:
+      - type: console
+        shell: bash
+        command: |
+          cat <<'EOF' > config/config.php
+          <?php
+            $CONFIG = array (
+              'overwriteprotocol' => 'https',
+              'overwrite.cli.url' => 'https://ncs',
+              'trusted_proxies' =>
+              array (
+                0 => 'ncs',
+              ),
+              'trusted_domains' =>
+              array (
+                0 => 'ncs',
+              ),
+              'upgrade.disable-web' => true,
+              'instanceid' => 'ocvb0i3uw47a',
+            );
+          EOF
   - name: Install Nextcloud
     container: gcb-playwright
     hidden: true
@@ -41,7 +68,8 @@ flow:
     commands:
       - type: console
         command: |
-          sudo -u www-data git clone -b master --single-branch --depth 1 https://github.com/nextcloud/viewer.git /var/www/html/apps/viewer/ \
+          mkdir /var/www/html/apps/viewer/ \
+          && cp -r /tmp/relations/viewer/* /var/www/html/apps/viewer/ \
           && cd /var/www/html/apps/viewer/ \
           && sudo -u www-data npm ci \
           && sudo -u www-data npm run build \
