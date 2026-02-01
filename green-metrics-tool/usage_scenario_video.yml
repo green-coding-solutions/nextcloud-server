@@ -1,7 +1,7 @@
 ---
-name: Nextcloud - Calendar - MariaDB - Firefox
+name: Nextcloud - Video - MariaDB - Firefox
 author: Arne Tarara <arne@green-coding.io> + Didi Hoffmann <didi@green-coding.io>
-description: Nexcloud Calendar Scenario
+description: Nexcloud Video Scenario
 compose-file: !include compose.yml
 
 services:
@@ -22,8 +22,8 @@ services:
 # since that is the case a local dev could also just mount a local folder which is already
 # a supported feature
 relations:
-  calendar: # will be put in /tmp/relations/calendar
-    url: https://github.com/green-coding-solutions/nextcloud-calendar
+  spreed: # will be put in /tmp/relations/calendar
+    url: https://github.com/green-coding-solutions/nextcloud-spreed
     branch: main
     # commit_hash: ghhkshfkjsdnfk # no commit means latest
 
@@ -57,7 +57,7 @@ flow:
     hidden: true
     commands:
       - type: console
-        command: python3 /tmp/relations/calendar/green-metrics-tool/nextcloud_install.py firefox
+        command: python3 /tmp/relations/spreed/green-metrics-tool/nextcloud_install.py firefox
 
   - name: Install Apps
     container: app
@@ -65,24 +65,21 @@ flow:
     commands:
       - type: console
         command: |
-          mkdir /var/www/html/apps/calendar/ \
-          && cp -r /tmp/relations/calendar/* /var/www/html/apps/calendar/ \
-          && sed -i '/^module\.exports = webpackConfig$/e cat /tmp/repo/green-metrics-tool/memory_patch.txt' /var/www/html/apps/calendar/webpack.config.js \
-          && chown -R www-data:www-data /var/www/html/apps/calendar/ \
-          && cd /var/www/html/apps/calendar/ \
+          mkdir /var/www/html/apps/spreed/ \
+          && cp -r /tmp/relations/spreed/* /var/www/html/apps/spreed/\
+          && chown -R www-data:www-data /var/www/html/apps/spreed/ \
+          && cd /var/www/html/apps/spreed/ \
           && sudo -u www-data composer install --no-dev \
           && sudo -u www-data npm ci \
-          && sudo -u www-data npm run build -- --parallelism 1 \
-          && sudo -u www-data php /var/www/html/occ app:enable calendar
+          && sudo -u www-data make build-js-production \
+          && sudo -u www-data php /var/www/html/occ app:enable spreed
         shell: bash
 
-
-
-  - name: Calendar
+  - name: Video
     container: gcb-playwright
     commands:
       - type: console
-        command: python3 /tmp/relations/calendar/green-metrics-tool/nextcloud_calendar.py firefox
+        command: python3 /tmp/relations/spreed/green-metrics-tool/nextcloud_video.py firefox
         note: Creating event
         read-notes-stdout: true
         read-sci-stdout: true
