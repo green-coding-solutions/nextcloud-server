@@ -80,6 +80,7 @@ flow:
         command: |
           mkdir /var/www/html/apps/viewer/ \
           && cp -r /tmp/relations/viewer/* /var/www/html/apps/viewer/ \
+          && chown -R www-data:www-data /var/www/html/apps/viewer/ \
           && cd /var/www/html/apps/viewer/ \
           && sudo -u www-data npm ci \
           && sudo -u www-data npm run build \
