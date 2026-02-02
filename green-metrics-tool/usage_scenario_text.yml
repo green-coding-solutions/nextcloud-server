@@ -71,24 +71,24 @@ flow:
     commands:
       - type: console
         command: |
-          mkdir /var/www/html/apps/viewer/ \
-          && cp -r /tmp/relations/viewer/* /var/www/html/apps/viewer/ \
-          && chown -R www-data:www-data /var/www/html/apps/viewer/ \
-          && cd /var/www/html/apps/viewer/ \
-          && sudo -u www-data npm ci \
-          && sudo -u www-data npm run build \
-          && sudo -u www-data php /var/www/html/occ app:enable viewer
+          mkdir /var/www/html/apps/viewer/
+          cp -r /tmp/relations/viewer/* /var/www/html/apps/viewer/
+          chown -R www-data:www-data /var/www/html/apps/viewer/
+          cd /var/www/html/apps/viewer/
+          sudo -u www-data npm ci
+          sudo -u www-data npm run build
+          sudo -u www-data php /var/www/html/occ app:enable viewer
         shell: bash
 
       - type: console
         command: |
-          mkdir /var/www/html/apps/text/ \
-          && cp -r /tmp/relations/text/* /var/www/html/apps/text/ \
-          && chown -R www-data:www-data /var/www/html/apps/text/ \
-          && cd /var/www/html/apps/text/ \
-          && sudo -u www-data composer install --no-dev \
-          && sudo -u www-data make npm-init build-js-production \
-          && sudo -u www-data php /var/www/html/occ app:enable text
+          mkdir /var/www/html/apps/text/
+          cp -r /tmp/relations/text/* /var/www/html/apps/text/
+          chown -R www-data:www-data /var/www/html/apps/text/
+          cd /var/www/html/apps/text/
+          sudo -u www-data composer install --no-dev
+          sudo -u www-data make npm-init build-js-production
+          sudo -u www-data php /var/www/html/occ app:enable text
         shell: bash
 
   - name: Create User
