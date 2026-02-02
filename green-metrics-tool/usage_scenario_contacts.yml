@@ -68,14 +68,14 @@ flow:
     commands:
       - type: console
         command: |
-          mkdir /var/www/html/apps/contacts/ \
-          && cp -r /tmp/relations/contacts/* /var/www/html/apps/contacts/\
-          && chown -R www-data:www-data /var/www/html/apps/contacts/ \
-          && cd /var/www/html/apps/contacts/ \
-          && sudo -u www-data composer install --no-dev \
-          && sudo -u www-data npm ci \
-          && sudo -u www-data npm run build \
-          && sudo -u www-data php /var/www/html/occ app:enable contacts
+          mkdir /var/www/html/apps/contacts/
+          cp -r /tmp/relations/contacts/* /var/www/html/apps/contacts/
+          chown -R www-data:www-data /var/www/html/apps/contacts/
+          cd /var/www/html/apps/contacts/
+          sudo -u www-data composer install --no-dev
+          sudo -u www-data npm ci
+          sudo -u www-data npm run build
+          sudo -u www-data php /var/www/html/occ app:enable contacts
         shell: bash
 
   - name: Contacts

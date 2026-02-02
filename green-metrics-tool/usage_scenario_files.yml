@@ -42,6 +42,7 @@ flow:
               'instanceid' => 'ocvb0i3uw47a',
             );
           EOF
+
   - name: Install Nextcloud
     container: gcb-playwright
     hidden: true

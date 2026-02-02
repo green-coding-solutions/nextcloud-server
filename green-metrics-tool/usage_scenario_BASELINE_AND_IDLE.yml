@@ -17,6 +17,9 @@ services:
        HOST_URL: https://ncs
     command: [ "tail", "-f", "/dev/null" ]   # keep container running
 
+  ncs:
+    mem_limit: 500MB # this should be enough and leaves room for the App container to have ~4 GB
+
 relations:
   text:
     url: https://github.com/green-coding-solutions/nextcloud-text.git
@@ -78,70 +81,60 @@ flow:
     commands:
       - type: console
         command: |
-          mkdir /var/www/html/apps/viewer/ \
-          && cp -r /tmp/relations/viewer/* /var/www/html/apps/viewer/ \
-          && chown -R www-data:www-data /var/www/html/apps/viewer/ \
-          && cd /var/www/html/apps/viewer/ \
-          && sudo -u www-data npm ci \
-          && sudo -u www-data npm run build \
-          && sudo -u www-data php /var/www/html/occ app:enable viewer
+          mkdir /var/www/html/apps/viewer/
+          cp -r /tmp/relations/viewer/* /var/www/html/apps/viewer/
+          chown -R www-data:www-data /var/www/html/apps/viewer/
+          cd /var/www/html/apps/viewer/
+          sudo -u www-data npm ci
+          sudo -u www-data npm run build
+          sudo -u www-data php /var/www/html/occ app:enable viewer
+        shell: bash
+      - type: console
+        command: |
+          mkdir /var/www/html/apps/text/
+          cp -r /tmp/relations/text/* /var/www/html/apps/text/
+          chown -R www-data:www-data /var/www/html/apps/text/
+          cd /var/www/html/apps/text/
+          sudo -u www-data composer install --no-dev
+          sudo -u www-data make npm-init build-js-production
+          sudo -u www-data php /var/www/html/occ app:enable text
         shell: bash
 
       - type: console
         command: |
-          sudo -u www-data git clone -b master --single-branch --depth 1 https://github.com/nextcloud/viewer.git /var/www/html/apps/viewer/ \
-          && cd /var/www/html/apps/viewer/ \
-          && sudo -u www-data npm ci \
-          && sudo -u www-data npm run build \
-          && sudo -u www-data php /var/www/html/occ app:enable viewer
+          mkdir /var/www/html/apps/spreed/
+          cp -r /tmp/relations/spreed/* /var/www/html/apps/spreed
+          chown -R www-data:www-data /var/www/html/apps/spreed/
+          cd /var/www/html/apps/spreed/
+          sudo -u www-data composer install --no-dev
+          sudo -u www-data npm ci
+          sudo -u www-data make build-js-production
+          sudo -u www-data php /var/www/html/occ app:enable spreed
         shell: bash
 
       - type: console
         command: |
-          mkdir /var/www/html/apps/text/ \
-          && cp -r /tmp/relations/text/* /var/www/html/apps/text/ \
-          && chown -R www-data:www-data /var/www/html/apps/text/ \
-          && cd /var/www/html/apps/text/ \
-          && sudo -u www-data composer install --no-dev \
-          && sudo -u www-data make npm-init build-js-production \
-          && sudo -u www-data php /var/www/html/occ app:enable text
+          mkdir /var/www/html/apps/contacts/
+          cp -r /tmp/relations/contacts/* /var/www/html/apps/contacts
+          chown -R www-data:www-data /var/www/html/apps/contacts/
+          cd /var/www/html/apps/contacts/
+          sudo -u www-data composer install --no-dev
+          sudo -u www-data npm ci
+          sudo -u www-data npm run build
+          sudo -u www-data php /var/www/html/occ app:enable contacts
         shell: bash
 
       - type: console
         command: |
-          mkdir /var/www/html/apps/spreed/ \
-          && cp -r /tmp/relations/spreed/* /var/www/html/apps/spreed/\
-          && chown -R www-data:www-data /var/www/html/apps/spreed/ \
-          && cd /var/www/html/apps/spreed/ \
-          && sudo -u www-data composer install --no-dev \
-          && sudo -u www-data npm ci \
-          && sudo -u www-data make build-js-production \
-          && sudo -u www-data php /var/www/html/occ app:enable spreed
-        shell: bash
-
-      - type: console
-        command: |
-          mkdir /var/www/html/apps/contacts/ \
-          && cp -r /tmp/relations/contacts/* /var/www/html/apps/contacts/\
-          && chown -R www-data:www-data /var/www/html/apps/contacts/ \
-          && cd /var/www/html/apps/contacts/ \
-          && sudo -u www-data composer install --no-dev \
-          && sudo -u www-data npm ci \
-          && sudo -u www-data npm run build \
-          && sudo -u www-data php /var/www/html/occ app:enable contacts
-        shell: bash
-
-      - type: console
-        command: |
-          mkdir /var/www/html/apps/calendar/ \
-          && cp -r /tmp/relations/calendar/* /var/www/html/apps/calendar/ \
-          && sed -i '/^module\.exports = webpackConfig$/e cat /tmp/repo/green-metrics-tool/memory_patch.txt' /var/www/html/apps/calendar/webpack.config.js \
-          && chown -R www-data:www-data /var/www/html/apps/calendar/ \
-          && cd /var/www/html/apps/calendar/ \
-          && sudo -u www-data composer install --no-dev \
-          && sudo -u www-data npm ci \
-          && sudo -u www-data npm run build -- --parallelism 1 \
-          && sudo -u www-data php /var/www/html/occ app:enable calendar
+          mkdir /var/www/html/apps/calendar/
+          cp -r /tmp/relations/calendar/* /var/www/html/apps/calendar/
+          sed -i '/^module\.exports = webpackConfig$/e cat /tmp/repo/green-metrics-tool/memory_patch.txt' /var/www/html/apps/calendar/webpack.config.js
+          chown -R www-data:www-data /var/www/html/apps/calendar/
+          cd /var/www/html/apps/calendar/
+          sudo -u www-data composer install --no-dev
+          sudo -u www-data npm ci
+          sudo -u www-data npm run build -- --parallelism 1
+          sudo -u www-data php /var/www/html/occ app:enable calendar
         shell: bash
 
   - name: Idle 3600
