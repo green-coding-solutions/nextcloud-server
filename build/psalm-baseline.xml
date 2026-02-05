@@ -1627,11 +1627,9 @@
   <file src="apps/files_sharing/lib/MountProvider.php">
     <InternalClass>
       <code><![CDATA[new View('/' . $owner . '/files')]]></code>
-      <code><![CDATA[new View('/' . $userId . '/files')]]></code>
     </InternalClass>
     <InternalMethod>
       <code><![CDATA[new View('/' . $owner . '/files')]]></code>
-      <code><![CDATA[new View('/' . $userId . '/files')]]></code>
     </InternalMethod>
   </file>
   <file src="apps/files_sharing/lib/Scanner.php">
@@ -2135,9 +2133,6 @@
       <code><![CDATA[IAccountManager::PROPERTY_TWITTER]]></code>
       <code><![CDATA[IAccountManager::PROPERTY_TWITTER]]></code>
       <code><![CDATA[IAccountManager::PROPERTY_TWITTER]]></code>
-      <code><![CDATA[IAccountManager::PROPERTY_TWITTER]]></code>
-      <code><![CDATA[IAccountManager::PROPERTY_TWITTER]]></code>
-      <code><![CDATA[IAccountManager::PROPERTY_TWITTER]]></code>
     </DeprecatedConstant>
     <DeprecatedMethod>
       <code><![CDATA[deleteUserValue]]></code>
@@ -2147,8 +2142,6 @@
       <code><![CDATA[getAppValue]]></code>
       <code><![CDATA[getAppValue]]></code>
       <code><![CDATA[getUserValue]]></code>
-      <code><![CDATA[implementsActions]]></code>
-      <code><![CDATA[implementsActions]]></code>
       <code><![CDATA[implementsActions]]></code>
       <code><![CDATA[search]]></code>
       <code><![CDATA[search]]></code>
@@ -2497,8 +2490,6 @@
   </file>
   <file src="apps/theming/lib/Controller/ThemingController.php">
     <DeprecatedMethod>
-      <code><![CDATA[getAppValue]]></code>
-      <code><![CDATA[getAppValue]]></code>
       <code><![CDATA[getAppValue]]></code>
     </DeprecatedMethod>
   </file>
