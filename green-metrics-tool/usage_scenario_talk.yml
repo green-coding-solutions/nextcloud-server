@@ -29,13 +29,10 @@ relations:
 
 
 flow:
-  - name: Install Nextcloud
-    container: gcb-playwright
+  - name: Patch config
+    container: app
     hidden: true
     commands:
-      # We need to patch the config first as it does not respect the https URL. Seems to be a bug.
-      # Try removing with next Nextcloud version and see if OVERWRITECLIURL or TRUSTED_PROXIES are respected from compose.yml
-      # One alternative can be to inject the full entrypoint.sh from the unofficial nextcloud container image
       - type: console
         shell: bash
         command: |
@@ -56,6 +53,10 @@ flow:
               'instanceid' => 'ocvb0i3uw47a',
             );
           EOF
+  - name: Install Nextcloud
+    container: gcb-playwright
+    hidden: true
+    commands:
       - type: console
         command: python3 /tmp/relations/spreed/green-metrics-tool/nextcloud_install.py firefox
 
